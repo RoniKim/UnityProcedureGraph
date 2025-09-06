@@ -27,3 +27,6 @@ UnityProcedureGraph는 [Node Graph Processor](https://github.com/alelievr/NodeGr
 3. **의존성**
    - Node Graph Processor 1.3.0
    - UniTask 2.5.10
+
+## 3) 이미지
+![GraphView](./docs/sample.png)
