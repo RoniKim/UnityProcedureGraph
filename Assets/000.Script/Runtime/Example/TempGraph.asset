@@ -15,7 +15,16 @@ MonoBehaviour:
   serializedNodes: []
   nodes:
   - rid: 8311543883779014658
-  edges: []
+  - rid: 8311543883779014659
+  edges:
+  - GUID: 0dd2c7a2-788f-4b91-9ec7-321baf2f37b9
+    owner: {fileID: 11400000}
+    inputNodeGUID: ab1203f9-0d03-4417-b010-87197babab03
+    outputNodeGUID: 251cbd36-2838-4f69-b10c-d1023c693235
+    inputFieldName: executed
+    outputFieldName: outPutcondition
+    inputPortIdentifier: 
+    outputPortIdentifier: 
   groups: []
   stackNodes: []
   pinnedElements: []
@@ -23,7 +32,7 @@ MonoBehaviour:
   serializedParameterList: []
   stickyNotes: []
   nodeInspectorReference: {fileID: 0}
-  position: {x: 31.333334, y: 0, z: 0}
+  position: {x: 0, y: 0, z: 0}
   scale: {x: 1, y: 1, z: 1}
   references:
     version: 2
@@ -36,10 +45,30 @@ MonoBehaviour:
         computeOrder: 0
         position:
           serializedVersion: 2
-          x: 7.7333317
-          y: 162
-          width: 101.99999
-          height: 77.33334
+          x: 104.64001
+          y: 127.99999
+          width: 101.99998
+          height: 77.333336
         expanded: 0
         debug: 0
         nodeLock: 0
+    - rid: 8311543883779014659
+      type: {class: MultipleConditionNode, ns: Roni.Graph.Node, asm: Assembly-CSharp}
+      data:
+        nodeCustomName: 
+        GUID: ab1203f9-0d03-4417-b010-87197babab03
+        computeOrder: 1
+        position:
+          serializedVersion: 2
+          x: 218.33333
+          y: 113.666664
+          width: 210.00002
+          height: 122.666695
+        expanded: 0
+        debug: 0
+        nodeLock: 0
+        isEndCheckStop: 0
+        state: 0
+        forWardinitValue: -1
+        orStateOutputIndex: -1
+        portCount: 1
