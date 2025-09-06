@@ -5,12 +5,12 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using GraphProcessor;
 using UnityEngine;
-using Wintek.Graph.Node;
+using Roni.Graph.Node;
 
-namespace Wintek.Graph.Runtime
+namespace Roni.Graph.Runtime
 {
 
-    public class RuntimeProcessor : BaseRuntimeProcessor
+    public class Procedure : BaseProcedure
     {
         private StartNode startNode;
         public StartNode StartNode
@@ -61,7 +61,7 @@ namespace Wintek.Graph.Runtime
         private CancellationTokenSource mainCts;
         public bool IsProcessing => mainCts != null && !mainCts.Token.IsCancellationRequested;
 
-        public RuntimeProcessor(BaseGraph graph) : base(graph)
+        public Procedure(BaseGraph graph) : base(graph)
         {
             var baseconditionNodes = graph.nodes.OfType<BaseConditionNode>();
             foreach (var node in baseconditionNodes)

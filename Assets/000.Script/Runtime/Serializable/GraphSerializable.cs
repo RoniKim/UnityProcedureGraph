@@ -10,7 +10,7 @@ using UnityEditor;
 using UnityEngine;
 
 
-namespace Wintek.Graph.Serializable
+namespace Roni.Graph.Serializable
 {
     [Serializable]
     public class SerializableGraph

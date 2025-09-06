@@ -4,9 +4,9 @@ using Cysharp.Threading.Tasks;
 using GraphProcessor;
 using Newtonsoft.Json;
 using UnityEngine;
-using Wintek.Graph.Runtime;
+using Roni.Graph.Runtime;
 
-namespace Wintek.Graph.Node
+namespace Roni.Graph.Node
 {
        
     public enum InitCallbackState
@@ -31,8 +31,8 @@ namespace Wintek.Graph.Node
         public ConditionalLink executed;
 
         [JsonIgnore]
-        internal RuntimeProcessor owner;
-        public RuntimeProcessor Owner => owner;
+        internal Procedure owner;
+        public Procedure Owner => owner;
 
         public override bool isRenamable => true;
 

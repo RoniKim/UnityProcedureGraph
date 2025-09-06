@@ -3,7 +3,7 @@ using UnityEngine;
 using GraphProcessor;
 
 
-namespace Wintek.Graph.Node
+namespace Roni.Graph.Node
 {
     [System.Serializable, NodeMenuItem("저작도구/StringListNode")]
     public class StringListNode : BaseNode

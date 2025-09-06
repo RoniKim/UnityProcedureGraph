@@ -3,21 +3,22 @@ using GraphProcessor;
 
 using System.Collections.Generic;
 using UnityEngine;
-using Wintek.Graph.Runtime;
-using Wintek.Graph.Serializable;
+using Roni.Graph.Runtime;
+using Roni.Graph.Serializable;
+using Cysharp.Threading.Tasks;
 
-namespace Wintek.Graph.Example
+namespace Roni.Graph.Example
 {
-    [RequireComponent(typeof(RuntimeProcessorRunner))]
+    [RequireComponent(typeof(UnityProcedureGraphManager))]
     public class ProcessorExample : MonoBehaviour
     {
         public List<BaseGraph> testGraphs = new List<BaseGraph>();
 
-        private RuntimeProcessorRunner runtimeProcessor;
+        private UnityProcedureGraphManager runtimeProcessor;
 
         private void Awake()
         {
-            runtimeProcessor = GetComponent<RuntimeProcessorRunner>();
+            runtimeProcessor = GetComponent<UnityProcedureGraphManager>();
             RunProcessor();
         }
   
@@ -42,9 +43,11 @@ namespace Wintek.Graph.Example
                 contentJsons[item.name]=GraphSerializable.ConvertGraphToJson(graph);
             }            
             
-            RuntimeProcessorRunner.Instance.InitializeProcessors(contentJsons);
-            RuntimeProcessorRunner.Instance.RunProcess();      
+            UnityProcedureGraphManager.Instance.InitializeProcessors(contentJsons);
+            UnityProcedureGraphManager.Instance.RunProcess().Forget();      
             
         }
+
+        
     }
 }

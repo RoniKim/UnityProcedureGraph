@@ -8,15 +8,15 @@ using Cysharp.Threading.Tasks;
 using GraphProcessor;
 using Unity.Linq;
 using UnityEngine;
-using Wintek.Graph.Node;
-using Wintek.Graph.Serializable;
+using Roni.Graph.Node;
+using Roni.Graph.Serializable;
 
-namespace Wintek.Graph.Runtime
+namespace Roni.Graph.Runtime
 {
-    public class RuntimeProcessorRunner : MonoBehaviour 
+    public class UnityProcedureGraphManager : MonoBehaviour 
     {
-        private static RuntimeProcessorRunner _instance;
-        public static RuntimeProcessorRunner Instance => _instance;
+        private static UnityProcedureGraphManager _instance;
+        public static UnityProcedureGraphManager Instance => _instance;
 
         private void Awake()
         {
@@ -29,7 +29,7 @@ namespace Wintek.Graph.Runtime
         }
     
 
-        public delegate void OnChangeProcessorDelegate(KeyValuePair<string, RuntimeProcessor> prevProcessor, KeyValuePair<string, RuntimeProcessor> currentProcessor);
+        public delegate void OnChangeProcessorDelegate(KeyValuePair<string, Procedure> prevProcessor, KeyValuePair<string, Procedure> currentProcessor);
         /// <summary>
         /// 해당 이벤트 사용 시 prevProcessor, currentProcessor가 비어있는지 체크하려면 key가 empty인지 확인하세요.
         /// </summary>
@@ -39,29 +39,29 @@ namespace Wintek.Graph.Runtime
         public delegate void OnChangeNodeDelegate(BaseConditionNode preNode, NodeChangeState preNodeState, BaseConditionNode currentNode);
         public OnChangeNodeDelegate OnChangeNode;
 
-        public delegate void OnProcesFastForwardDelegate(LinkedListNode<RuntimeProcessor> currentProcess, LinkedListNode<RuntimeProcessor> targetProcess, string targetNodeGuid, string startNodeGuid);
+        public delegate void OnProcesFastForwardDelegate(LinkedListNode<Procedure> currentProcess, LinkedListNode<Procedure> targetProcess, string targetNodeGuid, string startNodeGuid);
         public OnProcesFastForwardDelegate OnProcesFastForward;
-        public delegate void OnProcesBackwardDelegate(LinkedListNode<RuntimeProcessor> currentProcess, LinkedListNode<RuntimeProcessor> targetProcess);
+        public delegate void OnProcesBackwardDelegate(LinkedListNode<Procedure> currentProcess, LinkedListNode<Procedure> targetProcess);
         public OnProcesBackwardDelegate OnProcesBackward;
 
         public string GetCurrentProcessFileName => GetProcessorName(CurrentRuntimeProcess);
 
         private bool isSingleProcessAwait = false;
-        public LinkedList<RuntimeProcessor> runtimeProcessors
+        public LinkedList<Procedure> runtimeProcessors
         {
             get; private set;
         }
-        private Dictionary<string, LinkedListNode<RuntimeProcessor>> processorCache;
-        private LinkedListNode<RuntimeProcessor> currentRuntimeProcess;
-        public LinkedListNode<RuntimeProcessor> CurrentRuntimeProcess
+        private Dictionary<string, LinkedListNode<Procedure>> processorCache;
+        private LinkedListNode<Procedure> currentRuntimeProcess;
+        public LinkedListNode<Procedure> CurrentRuntimeProcess
         {
             get { return currentRuntimeProcess; }
             private set
             {
                 if (currentRuntimeProcess != value)
                 {
-                    KeyValuePair<string, RuntimeProcessor> prevProcessor = new KeyValuePair<string, RuntimeProcessor>(GetProcessorName(currentRuntimeProcess), currentRuntimeProcess?.Value);
-                    KeyValuePair<string, RuntimeProcessor> currentProcessor = new KeyValuePair<string, RuntimeProcessor>(GetProcessorName(value), value?.Value);
+                    KeyValuePair<string, Procedure> prevProcessor = new KeyValuePair<string, Procedure>(GetProcessorName(currentRuntimeProcess), currentRuntimeProcess?.Value);
+                    KeyValuePair<string, Procedure> currentProcessor = new KeyValuePair<string, Procedure>(GetProcessorName(value), value?.Value);
                     OnChangeProcessor?.Invoke(prevProcessor, currentProcessor);
                     currentRuntimeProcess = value;
                 }
@@ -76,13 +76,13 @@ namespace Wintek.Graph.Runtime
             isProcessing = false;
 
             mainCts = new CancellationTokenSource();
-            runtimeProcessors = new LinkedList<RuntimeProcessor>();
-            processorCache = new Dictionary<string, LinkedListNode<RuntimeProcessor>>();
+            runtimeProcessors = new LinkedList<Procedure>();
+            processorCache = new Dictionary<string, LinkedListNode<Procedure>>();
 
             foreach (var path in _paths)
             {
                 var processGraph = GraphSerializable.ConvertJsonToGraph(path);
-                var processor = new RuntimeProcessor(processGraph);
+                var processor = new Procedure(processGraph);
                 processor.InjectWaitEndCheker(waitEndChecker);
                 processor.OnChangeNode += GetNodeChange;
                 var node = runtimeProcessors.AddLast(processor);
@@ -94,13 +94,13 @@ namespace Wintek.Graph.Runtime
             isProcessing = false;
 
             mainCts = new CancellationTokenSource();
-            runtimeProcessors = new LinkedList<RuntimeProcessor>();
-            processorCache = new Dictionary<string, LinkedListNode<RuntimeProcessor>>();
+            runtimeProcessors = new LinkedList<Procedure>();
+            processorCache = new Dictionary<string, LinkedListNode<Procedure>>();
 
             foreach (var path in _paths)
             {
                 var processGraph = GraphSerializable.ConvertJsonToGraph(path);
-                var processor = new RuntimeProcessor(processGraph);
+                var processor = new Procedure(processGraph);
                 processor.OnChangeNode += GetNodeChange;
                 var node = runtimeProcessors.AddLast(processor);
                 processorCache[Path.GetFileNameWithoutExtension(path)] = node;
@@ -111,13 +111,13 @@ namespace Wintek.Graph.Runtime
             isProcessing = false;
 
             mainCts = new CancellationTokenSource();
-            runtimeProcessors = new LinkedList<RuntimeProcessor>();
-            processorCache = new Dictionary<string, LinkedListNode<RuntimeProcessor>>();
+            runtimeProcessors = new LinkedList<Procedure>();
+            processorCache = new Dictionary<string, LinkedListNode<Procedure>>();
 
             foreach (var path in jsons)
             {
                 var processGraph = GraphSerializable.ConvertJsonTextToGraph(path.Value);
-                var processor = new RuntimeProcessor(processGraph);
+                var processor = new Procedure(processGraph);
                 processor.OnChangeNode += GetNodeChange;
                 var node = runtimeProcessors.AddLast(processor);
                 processorCache[path.Key] = node;
@@ -304,7 +304,7 @@ namespace Wintek.Graph.Runtime
 
         }
 
-        public async UniTask RunSingleProcess(LinkedListNode<RuntimeProcessor> startProcessor = null)
+        public async UniTask RunSingleProcess(LinkedListNode<Procedure> startProcessor = null)
         {
             if (runtimeProcessors == null || runtimeProcessors.Count == 0)
             {
@@ -359,7 +359,7 @@ namespace Wintek.Graph.Runtime
         }
 
  
-        public async UniTask RunProcess(LinkedListNode<RuntimeProcessor> startProcessor = null, BaseConditionNode startNode = null)
+        public async UniTask RunProcess(LinkedListNode<Procedure> startProcessor = null, BaseConditionNode startNode = null)
         {
             if (runtimeProcessors == null || runtimeProcessors.Count == 0)
             {
@@ -403,7 +403,7 @@ namespace Wintek.Graph.Runtime
 
 
         #region Processor Controll   
-        private void ProcessControllBasic(LinkedListNode<RuntimeProcessor> targetProcess, bool isAutoRun = true)
+        private void ProcessControllBasic(LinkedListNode<Procedure> targetProcess, bool isAutoRun = true)
         {
             if (targetProcess == null) return;
 
@@ -438,7 +438,7 @@ namespace Wintek.Graph.Runtime
             var findProcess = FindProcessor(_key);
             ProcessControllBasic(findProcess);
         }
-        private async UniTask FastForWardProcess(LinkedListNode<RuntimeProcessor> targetProcess, bool isAutoRun = true)
+        private async UniTask FastForWardProcess(LinkedListNode<Procedure> targetProcess, bool isAutoRun = true)
         {
             if (targetProcess == null || CurrentRuntimeProcess == null) return;
 
@@ -464,7 +464,7 @@ namespace Wintek.Graph.Runtime
             if (isAutoRun)
                 RunProcess(CurrentRuntimeProcess).Forget();
         }
-        private async UniTask FastForWardProcess(LinkedListNode<RuntimeProcessor> targetProcessNode, string targetNodeGUID, bool isAutoRun = true)
+        private async UniTask FastForWardProcess(LinkedListNode<Procedure> targetProcessNode, string targetNodeGUID, bool isAutoRun = true)
         {
             if (targetProcessNode == null || CurrentRuntimeProcess == null) return;
             BaseConditionNode startNode = CurrentRuntimeProcess.Value.CurrentNode;
@@ -515,7 +515,7 @@ namespace Wintek.Graph.Runtime
             var findProcess = FindProcessor(_targetkey);
             FastForWardProcess(findProcess, targetNnodeGUID, isAutoRun).Forget();
         }
-        private async UniTask BackWardNodeProcess(LinkedListNode<RuntimeProcessor> targetNode, bool isAutoRun = true)
+        private async UniTask BackWardNodeProcess(LinkedListNode<Procedure> targetNode, bool isAutoRun = true)
         {
             if (targetNode == null || CurrentRuntimeProcess == null || IsNodeAfter(CurrentRuntimeProcess, targetNode)) return;
 
@@ -546,7 +546,7 @@ namespace Wintek.Graph.Runtime
         /// </summary>
         /// <param name="key"></param>
         /// <returns></returns>
-        public LinkedListNode<RuntimeProcessor> FindProcessor(string key)
+        public LinkedListNode<Procedure> FindProcessor(string key)
         {
             return processorCache.TryGetValue(key, out var processor) ? processor : null;
         }
@@ -555,14 +555,14 @@ namespace Wintek.Graph.Runtime
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
-        public LinkedListNode<RuntimeProcessor> FindProcessor(int index)
+        public LinkedListNode<Procedure> FindProcessor(int index)
         {
             if (index < 0 || processorCache.Count - 1 < index)
                 return null;
 
             return processorCache.ElementAt(index).Value;
         }
-        public LinkedListNode<RuntimeProcessor> FindProcessor(RuntimeProcessor _processor)
+        public LinkedListNode<Procedure> FindProcessor(Procedure _processor)
         {
             var findprocessor = processorCache.Values.Where(x => x.Value.Equals(_processor)).FirstOrDefault();
             return findprocessor;
@@ -575,7 +575,7 @@ namespace Wintek.Graph.Runtime
         }
         #endregion
         #region Utility
-        public void InjectCurrentProcessor(LinkedListNode<RuntimeProcessor> processor)
+        public void InjectCurrentProcessor(LinkedListNode<Procedure> processor)
         {
             CurrentRuntimeProcess = processor;
         }
@@ -583,11 +583,11 @@ namespace Wintek.Graph.Runtime
         {
             return processorCache.FirstOrDefault(x => x.Value == CurrentRuntimeProcess).Key ?? string.Empty;
         }
-        public string GetProcessorName(LinkedListNode<RuntimeProcessor> processor)
+        public string GetProcessorName(LinkedListNode<Procedure> processor)
         {
             return processorCache.FirstOrDefault(x => x.Value == processor).Key ?? string.Empty;
         }
-        public string GetProcessorName(RuntimeProcessor processor)
+        public string GetProcessorName(Procedure processor)
         {
             return processorCache.FirstOrDefault(x => x.Value.Value == processor).Key ?? string.Empty;
         }

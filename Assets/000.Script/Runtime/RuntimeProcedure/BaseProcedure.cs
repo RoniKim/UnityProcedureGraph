@@ -4,9 +4,9 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using GraphProcessor;
 using UnityEngine;
-using Wintek.Graph.Node;
+using Roni.Graph.Node;
 
-namespace Wintek.Graph.Runtime
+namespace Roni.Graph.Runtime
 {
     public enum NodeChangeState
     {
@@ -19,7 +19,7 @@ namespace Wintek.Graph.Runtime
     {
         UniTask IsEndWaitRequired(BaseConditionNode _node, CancellationToken _cancellationToken = default);
     }
-    public abstract class BaseRuntimeProcessor
+    public abstract class BaseProcedure
     {
         protected IWaitEndChecker waitEndChecker;
         internal delegate void OnChangeNodeDelegate(BaseConditionNode preNode,NodeChangeState preNodeState,BaseConditionNode currentNode);
@@ -37,7 +37,7 @@ namespace Wintek.Graph.Runtime
         /// Manage graph scheduling and processing
         /// </summary>
         /// <param name="graph">Graph to be processed</param>
-        public BaseRuntimeProcessor(BaseGraph graph)
+        public BaseProcedure(BaseGraph graph)
         {
             this.graph = graph;
     

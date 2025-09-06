@@ -6,9 +6,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using UnityEngine;
-using Wintek.Graph.Node;
+using Roni.Graph.Node;
 
-namespace Wintek.Graph.Runtime.NodeInit
+namespace Roni.Graph.Runtime.NodeInit
 {
     public abstract class BaseNodesSetting : MonoBehaviour
     {
@@ -128,7 +128,7 @@ namespace Wintek.Graph.Runtime.NodeInit
             }
 
             // 모든 프로세서 노드 가져오기
-            var allNodes = RuntimeProcessorRunner.Instance.GetAllProcessorNodes()
+            var allNodes = UnityProcedureGraphManager.Instance.GetAllProcessorNodes()
                 .Where(item => item is BaseConditionNode)
                 .Cast<BaseConditionNode>()
                 .ToList();
@@ -191,7 +191,7 @@ namespace Wintek.Graph.Runtime.NodeInit
             }
 
             // 캐시된 메서드를 사용하여 호출
-            foreach (var item in RuntimeProcessorRunner.Instance.GetAllProcessorNodes())
+            foreach (var item in UnityProcedureGraphManager.Instance.GetAllProcessorNodes())
             {
                 if (item is BaseConditionNode node)
                 {

@@ -3,8 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
-using Wintek.Graph.Node;
-namespace Wintek.Content.Node
+
+namespace Roni.Graph.Node
 {
     /// <summary>
     /// (Condition) 아무런 기능이 없는 비어있는 노드

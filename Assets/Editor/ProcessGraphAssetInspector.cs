@@ -6,7 +6,7 @@ using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Wintek.Graph.Editor
+namespace Roni.Graph.Editor
 {
     [CustomEditor(typeof(BaseGraph), true)]
     public class ProcessGraphAssetInspector : GraphInspector
