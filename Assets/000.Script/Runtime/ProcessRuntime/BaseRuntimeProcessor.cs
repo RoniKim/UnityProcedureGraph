@@ -10,10 +10,10 @@ namespace Wintek.Graph.Runtime
 {
     public enum NodeChangeState
     {
-        Nomal, End, Cancel
+        Normal, End, Cancel
     }
     /// <summary>
-    /// RuntimeProcess¿¡¼­ EndCheck ÈÄ ¸¸Á·ÇßÀ»¶§ OnEnd() or OnCancel()À» È£ÃâÇÏ±âÀü ±â´Ù¸®±âÀ§ÇÑ ÀÎÅÍÆäÀÌ½º
+    /// RuntimeProcessì—ì„œ EndCheck í›„ ë§Œì¡±í–ˆì„ë•Œ OnEnd() or OnCancel()ì„ í˜¸ì¶œí•˜ê¸°ì „ ê¸°ë‹¤ë¦¬ê¸°ìœ„í•œ ì¸í„°í˜ì´ìŠ¤
     /// </summary>
     public  interface IWaitEndChecker
     {

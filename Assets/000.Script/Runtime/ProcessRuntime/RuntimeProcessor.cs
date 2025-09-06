@@ -51,7 +51,7 @@ namespace Wintek.Graph.Runtime
                         value.OnProcess();
                     }
                     PreNode = currentNode;
-                    currentNodeChangeState = NodeChangeState.Nomal;
+                    currentNodeChangeState = NodeChangeState.Normal;
                     currentNode = value;
                     OnChangeNode?.Invoke(PreNode, currentNodeChangeState, value);
                 }
